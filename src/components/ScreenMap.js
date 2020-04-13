@@ -9,18 +9,13 @@ class ScreenMap extends Component {
     reports: []
   };
 
-  async componentDidMount() {
-    const snapshot = await db.collection("reports").get();
-
-    var reports = snapshot.docs.map(doc => doc.data());
-    //format data
-    /*  reports = reports.map(report =>{
-            report.petCoatColor = report.petCoatColor.toString()
-            console.log(report.petCoatColor);
-        })
-        console.log(reports);
-*/
-    this.setState({ reports: reports });
+   componentDidMount() {
+    //Get all reports from collection
+    db.collection("reports").get().then((snapshot)=>{
+      var reports = snapshot.docs.map(doc => doc.data());
+      
+      this.setState({ reports: reports });
+    })
   }
 
   render() {
@@ -36,7 +31,7 @@ class ScreenMap extends Component {
         </Grid>
         <Grid item xs={12} sm={8}>
           <Paper>
-            <MapOfReports reports={this.state.reports} key={"map"} />
+            <MapOfReports reports={this.state.reports} key="map" />
           </Paper>
         </Grid>
 

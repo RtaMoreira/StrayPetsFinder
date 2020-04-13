@@ -3,7 +3,7 @@ import "./App.css";
 import { makeStyles } from "@material-ui/core/styles";
 import { AppBar, Toolbar } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
-import AddLostReport from "./components/AddLostReport";
+import ScreenAddLostReport from "./components/ScreenAddLostReport";
 import ScreenMap from "./components/ScreenMap";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import Button from "@material-ui/core/Button";
@@ -56,7 +56,7 @@ function App() {
 
         <Switch>
           <Route exact path="/" component={ScreenMap} />
-          <Route path="/addLostReport" component={AddLostReport} />
+          <Route path="/addLostReport" component={ScreenAddLostReport} />
         </Switch>
       </BrowserRouter>
       </ThemeProvider>

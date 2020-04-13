@@ -1,13 +1,12 @@
     export const validationNext = async (validationSchema,object, callbackNext, callback) => {
-        console.log("VALIDATION ");
         await validationSchema
           .validate(object)
           .then(result => {
             console.log(result);
-            callbackNext();
+            callbackNext(); //next mini form
           })
           .catch(err => {
             console.log(err);
-            callback(err);
+            callback(err); //set errors to errors state
           });
       };
