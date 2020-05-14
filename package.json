@@ -18,6 +18,7 @@
     "google-map-react": "^1.1.7",
     "leaflet": "^1.6.0",
     "mapbox-gl": "^1.9.0",
+    "material-table": "^1.57.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-leaflet": "^2.6.3",
@@ -47,6 +48,7 @@
     ]
   },
   "devDependencies": {
+    "eslint-plugin-react-hooks": "^3.0.0",
     "fibers": "^4.0.2",
     "node-sass": "^4.13.1",
     "sass": "^1.26.3",

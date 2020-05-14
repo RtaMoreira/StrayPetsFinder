@@ -32,6 +32,12 @@ const style = makeStyles((theme) => ({
     error: {
       color: "red",
     },
+
+
+    //sign in forms
+    fullWidthInputs : {
+      width: "100%"
+    }
   }));
 
   export default style;

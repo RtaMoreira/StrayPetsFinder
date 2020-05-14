@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { storage } from "../../firebaseConfig";
+import { FirebaseContext } from "../../firebaseConfig";
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import InputLabel from "@material-ui/core/InputLabel";
@@ -9,6 +9,7 @@ import style from "../../assets/style";
 const AnimalPicture = (props) => {
   const classes = style();
   const [image, setImage] = useState(null);
+  const { user, storage } = React.useContext(FirebaseContext);
   const [imgPreview, setImgPreview] = useState(
     props.report.imageUrl === "no image" ? "" : props.report.imageUrl
   );
@@ -21,11 +22,9 @@ const AnimalPicture = (props) => {
   const handleChange = (e) => {
     if (e.target.files[0]) {
       const fileSelected = e.target.files[0];
-      console.log(e.target.files[0]);
       setImage(fileSelected); //save raw image object
 
       setImgPreview(URL.createObjectURL(fileSelected)); //save local url for preview
-      console.log(imgPreview);
 
       //reset errors msg when image is picked
       setErrors({ path: "", message: "" });
@@ -34,10 +33,9 @@ const AnimalPicture = (props) => {
 
   //image upload (with blob)
   const handleUpload = () => {
-    console.log(image);
     const uploadTask = storage
       .ref("images")
-      .child(props.report.email)
+      .child(user.email)
       .child(image.name)  
       .put(image); //raw image
 
@@ -49,18 +47,16 @@ const AnimalPicture = (props) => {
       },
       (error) => {
         // error function
-        console.log(error);
       },
       () => {
         // complete function
         //Retrieve download URL of the image stored in Firebase
         storage
           .ref("images")
-          .child(props.report.email)
+          .child(user.email)
           .child(image.name)
           .getDownloadURL()
           .then((urlimage) => {
-            console.log("url download", urlimage);
             props.handleImageUrl(urlimage); //save that URL
           });
       }
@@ -83,7 +79,6 @@ const AnimalPicture = (props) => {
         props.handleNext();
       })
       .catch((err) => {
-        console.log(err);
         setErrors(err);
       });
   };

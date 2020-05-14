@@ -1,5 +1,4 @@
 import React, {useState} from 'react';
-import { makeStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
@@ -7,7 +6,7 @@ import style from "../../assets/style";
 
 
 const ReviewReport = (props) => {
-    const [report, setReport] = useState(props.report);
+    const [report] = useState(props.report);
     const classes =  style();
 
 
@@ -21,10 +20,6 @@ const ReviewReport = (props) => {
               height="auto"
               alt="animal"
             />
-            <br />
-            Your name: {report.firstname + " " + report.lastname}
-            <br />
-            Your email: {report.email}
             <br />
             Name: {report.petName ? report.petName : "?"}
             <br />
@@ -62,7 +57,7 @@ const ReviewReport = (props) => {
             variant="contained"
             color="primary"
           >
-            Publish my report
+            {props.report.id? "Update my report": "Publish my report"}
           </Button>
         </Paper>
     );

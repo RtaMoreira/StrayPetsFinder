@@ -1,64 +1,40 @@
 import React from "react";
 import "./App.css";
-import { makeStyles } from "@material-ui/core/styles";
-import { AppBar, Toolbar } from "@material-ui/core";
-import Typography from "@material-ui/core/Typography";
 import ScreenAddLostReport from "./components/ScreenAddLostReport";
 import ScreenMap from "./components/ScreenMap";
+import ScreenSignUp from "./components/Auth/ScreenSignUp";
+import ScreenSignIn from "./components/Auth/ScreenSignIn";
+import ScreenPwForgot from "./components/Auth/ScreenPwForgot";
+import ScreenAccount from "./components/ScreenAccount";
+import ScreenEditReport from "./components/ScreenEditReport";
+import Header from "./components/Header";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
-import Button from "@material-ui/core/Button";
-import { Link } from "react-router-dom";
 import theme from "./assets/AppTheme";
-import { ThemeProvider } from '@material-ui/styles';
+import { ThemeProvider } from "@material-ui/styles";
+import {FirebaseContext,db,auth,storage} from "./firebaseConfig";
+import useAuth from "./components/Auth/useAuth";
 
-
-const useStyles = makeStyles((theme) => ({
-  title: {
-    flexGrow: 1,
-
-  },
-}));
 
 function App() {
-  const classes = useStyles();
+const user = useAuth();
   return (
     <div className="App">
-    <ThemeProvider theme={theme}>
-      <BrowserRouter>
-        <AppBar position="sticky" >
-          <Toolbar sp>
-            <Link to="/" style={{ textDecoration: "none", color: "white" }}>
-              <Typography variant="h6" className={classes.title}>
-                Stray Pets Finder
-              </Typography>
-            </Link>
-            <Link to="/addLostReport" style={{ textDecoration: "none" }}>
-              <Button
-                variant="contained"
-                color="secondary"
-                style={{ margin: "1em" }}
-                disableElevation
-              >
-                Report lost pet
-              </Button>
-            </Link>
-            <Button
-              variant="contained"
-              color="primary"
-              style={{ margin: "1em" }}
-              disabled
-              disableElevation
-            >
-              Report found pet
-            </Button>
-          </Toolbar>
-        </AppBar>
+      <ThemeProvider theme={theme}>
+        <BrowserRouter>
+        <FirebaseContext.Provider value={{user, db,auth,storage}}>
+          <Header />
+          <Switch>
+            <Route exact path="/" component={ScreenMap} />
+            <Route path="/addLostReport" component={ScreenAddLostReport} />
+            <Route path="/signUp" component={ScreenSignUp} />
+            <Route path="/signIn" component={ScreenSignIn} />
+            <Route path="/recoverAccount" component={ScreenPwForgot} />
+            <Route path="/account" component={ScreenAccount} />
+            <Route path="/edit-report" component={ScreenEditReport} />
 
-        <Switch>
-          <Route exact path="/" component={ScreenMap} />
-          <Route path="/addLostReport" component={ScreenAddLostReport} />
-        </Switch>
-      </BrowserRouter>
+          </Switch>
+          </FirebaseContext.Provider>
+        </BrowserRouter>
       </ThemeProvider>
     </div>
   );

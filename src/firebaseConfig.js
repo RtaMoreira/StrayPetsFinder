@@ -1,4 +1,5 @@
 import Firebase from "firebase"
+import FirebaseContext from "./firebase/context"
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -14,6 +15,9 @@ const firebaseConfig = {
 
   let app = Firebase.initializeApp(firebaseConfig);
   Firebase.analytics();
+  Firebase.auth().setPersistence(Firebase.auth.Auth.Persistence.SESSION);
 
 export const db = app.firestore();
 export const storage = app.storage();
+export const auth = app.auth();
+export {FirebaseContext};

@@ -3,7 +3,10 @@ import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import InputLabel from "@material-ui/core/InputLabel";
-import { getCurrentLocation, geocodeReverse } from "../../functions/geoCoding";
+import {
+  geocodeReverse,
+  geocodeForward,
+} from "../../functions/geoCoding";
 import { validationNext } from "../../functions/validation";
 import * as yup from "yup";
 import style from "../../assets/style";
@@ -14,12 +17,11 @@ import {
 import DateFnsUtils from "@date-io/date-fns";
 import { Map, TileLayer, Marker } from "react-leaflet";
 
-
 const EventInfo = (props) => {
   const classes = style();
   const [center, setCenter] = useState({
-    lat: 60.199999,
-    lng: 24.93777,
+    lat: 46.46299,  //Vevey, CH by default
+    lng: 6.84345,
     zoom: 13,
   });
   const [pickedPosition, setPickedPosition] = useState();
@@ -32,23 +34,46 @@ const EventInfo = (props) => {
   });
 
   useEffect(() => {
-    getCurrentLocation(showCurrentPosition);
-  }, []);
+    var coordinates = {lat: props.report.lat, lng:props.report.lng};
+    //if location already given (by browser or because is editing an existing report) setCenter of map to it
+    if (coordinates.lat !== 0)
+      setCenter({ ...center, lat: coordinates.lat, lng: coordinates.lng });
 
-  const showCurrentPosition = (position) => {
-    console.log("showcurentPos :", position);
-    setCenter({ ...center, lat: position.coords.latitude });
-    setCenter({ ...center, lng: position.coords.longitude });
-  };
+    //if EDIT MODE : show picked position || if in add mode, position has been picked and go back from review
+    if(props.report.id || (props.report.location!=="" && coordinates.lng!==0))
+      setPickedPosition({lat: coordinates.lat, lng: coordinates.lng});
+  }, [props.report]);
 
   const handleClickonMap = async (e) => {
-    console.log("handClick :", e.latlng);
     setPickedPosition(e.latlng);
+    //setCenter({ ...center, lat: e.latlng.lat, lng:e.latlng.lng });
+
     //Get Address of picked point (method with callback to get address from function module GeocodeReverse)
-    await geocodeReverse(e.latlng.lat, e.latlng.lng, props.handleLocation);
+    await geocodeReverse(
+      e.latlng.lat,
+      e.latlng.lng,
+      props.handleLocation,
+      setCenter
+    );
 
     //reset errors messages
     setErrors({ path: "", message: "" });
+  };
+
+  const handleTypedAddress = async (e) => {
+    await geocodeForward(
+      props.report.location,
+      props.handleLocation,
+      setPickedPosition,
+      setCenter
+    );
+  };
+
+  const keyPress = (e) => {
+    if (e.key === "Enter") {
+      if (e.target.name !== "circonstances") e.preventDefault();
+      e.target.blur();
+    }
   };
 
   return (
@@ -70,6 +95,7 @@ const EventInfo = (props) => {
               KeyboardButtonProps={{
                 "aria-label": "change date",
               }}
+              onKeyDown={keyPress}
             />
             <br /> <br />
           </MuiPickersUtilsProvider>
@@ -86,6 +112,7 @@ const EventInfo = (props) => {
             onChange={(e) => props.handleChange(e)}
             name="circonstances"
             style={{ width: 300 }}
+            onKeyDown={keyPress}
           />
         </Grid>
         <br />
@@ -93,13 +120,15 @@ const EventInfo = (props) => {
           <br />
           <InputLabel>
             Location of the event <br />
-            (Click on the map to pick a location)
+            (Write the address or click on the map)
           </InputLabel>
           <TextField
             multiline
             label="Address"
             value={props.report.location}
             onChange={(e) => props.handleChange(e)}
+            onBlur={(e) => handleTypedAddress(e)}
+            onKeyDown={keyPress}
             name="location"
             variant="filled"
             required
